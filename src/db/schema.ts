@@ -1,25 +1,28 @@
-export const testing = pgTable("testing", {
-  id: text("id").notNull().primaryKey(),
-  name: text("name"),
-});
-
 import {
   timestamp,
   pgTable,
   text,
   primaryKey,
   integer,
-} from "drizzle-orm/pg-core";
-import type { AdapterAccount } from "@auth/core/adapters";
-
-export const users = pgTable("user", {
-  id: text("id").notNull().primaryKey(),
+  uuid
+} from "drizzle-orm/pg-core"
+import type { AdapterAccount } from "next-auth/adapters"
+import { randomUUID } from "crypto"
+import { sql } from "drizzle-orm"
+ 
+export const testing = pgTable("testing", {
+  id: text("id").primaryKey(),
   name: text("name"),
-  email: text("email").notNull(),
-  emailVerified: timestamp("emailVerified", { mode: "date" }),
-  image: text("image"),
 });
 
+export const users = pgTable("user", {
+  id: text("id").primaryKey().$defaultFn(() => randomUUID()),
+  name: text("name"),
+  email: text("email").notNull().unique(),
+  emailVerified: timestamp("emailVerified", { mode: "date" }),
+  image: text("image"),
+})
+ 
 export const accounts = pgTable(
   "account",
   {
@@ -42,16 +45,17 @@ export const accounts = pgTable(
       columns: [account.provider, account.providerAccountId],
     }),
   })
-);
-
+)
+ 
 export const sessions = pgTable("session", {
-  sessionToken: text("sessionToken").notNull().primaryKey(),
+  id: text("id").primaryKey().$defaultFn(() => randomUUID()),
+  sessionToken: text("sessionToken").notNull().unique(),
   userId: text("userId")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   expires: timestamp("expires", { mode: "date" }).notNull(),
-});
-
+},)
+ 
 export const verificationTokens = pgTable(
   "verificationToken",
   {
@@ -62,4 +66,15 @@ export const verificationTokens = pgTable(
   (vt) => ({
     compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
   })
-);
+)
+
+export const room = pgTable("room", {
+  userId: text("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  description: text("description"),
+  githubRepo: text("githubRepo"),
+});
+
+export type Room = typeof room.$inferSelect;
