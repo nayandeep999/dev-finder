@@ -20,7 +20,7 @@ import { useRouter } from "next/navigation";
 const formSchema = z.object({
   name: z.string().min(1).max(50),
   description: z.string().min(1).max(250),
-  language: z.string().min(1).max(50),
+  tags: z.string().min(1).max(50),
   githubRepo: z.string().min(1).max(150),
 });
 
@@ -33,10 +33,11 @@ export function CreateRoomForm() {
     defaultValues: {
       name: "",
       description: "",
-      language: "",
       githubRepo: "",
+      tags: "",
     },
   });
+
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     //TODO: invoke a server action to store the data in our database
@@ -80,7 +81,7 @@ export function CreateRoomForm() {
 
         <FormField
           control={form.control}
-          name="language"
+          name="tags"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Primary Programming Language</FormLabel>

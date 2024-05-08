@@ -1,14 +1,14 @@
+import { randomUUID } from "crypto"
 import {
-  timestamp,
-  pgTable,
-  text,
-  primaryKey,
   integer,
-  uuid
+  pgTable,
+  primaryKey,
+  text,
+  timestamp,
+  uuid,
 } from "drizzle-orm/pg-core"
 import type { AdapterAccount } from "next-auth/adapters"
-import { randomUUID } from "crypto"
-
+import { sql } from "drizzle-orm";
  
 
 export const users = pgTable("user", {
@@ -65,11 +65,16 @@ export const verificationTokens = pgTable(
 )
 
 export const room = pgTable("room", {
+  id: uuid("id")
+    .default(sql`gen_random_uuid()`)
+    .notNull()
+    .primaryKey(),
   userId: text("userId")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
   description: text("description"),
+  tags: text("tags").notNull(),
   githubRepo: text("githubRepo"),
 });
 
