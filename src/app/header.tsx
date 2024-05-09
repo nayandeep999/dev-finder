@@ -23,7 +23,7 @@ function AccountDropdown() {
       {" "}
       {/* Added 'items-center' to align items vertically */}
       <Avatar>
-        <AvatarImage src={session.data?.user?.image} />
+        <AvatarImage src={session.data?.user?.image  ?? ""} />
         <AvatarFallback>CN</AvatarFallback>
       </Avatar>
       <DropdownMenu>
@@ -31,16 +31,15 @@ function AccountDropdown() {
           <Button variant="outline">{session.data?.user?.name}</Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          {isLoggedIn ? (
-            <DropdownMenuItem onClick={() => signOut()}>
-              <LogOutIcon className="mr-2" /> Sign Out
-            </DropdownMenuItem>
-          ) : (
-            <DropdownMenuItem onClick={() => signIn()}>
-              <LogInIcon className="mr-2" />
-              Sign In
-            </DropdownMenuItem>
-          )}
+          <DropdownMenuItem
+            onClick={() =>
+              signOut({
+                callbackUrl: "/",
+              })
+            }
+          >
+            <LogOutIcon className="mr-2" /> Sign Out
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
@@ -51,17 +50,22 @@ export function Header() {
   return (
     <header className="container mx-auto py-1 bg-blue-100 dark:bg-gray-900">
       <div className="flex justify-between items-center">
- 
         {/* Added 'items-center' to align items vertically */}
-       <Link href="/" className="flex items-center hover:opacity-80 whitespace-nowrap">
+        <Link
+          href="/"
+          className="flex items-center hover:opacity-80 whitespace-nowrap"
+        >
           <div>
             <Image src="/logo.png" alt="logo" width="60" height="60" />
           </div>
           <div className="text-lg font-medium">Dev Finder</div>
         </Link>
         <div className="flex items-center gap-4 ">
-          {/* Added 'items-center' to align items vertically */}
-          <AccountDropdown />
+          {session.data && <AccountDropdown /> }
+          {!session.data && (
+            <Button variant="outline" onClick={() => signIn()}>
+              <LogInIcon className="mr-2" /> Sign In </Button>
+          )}
           <ModeToggle />
         </div>
       </div>
