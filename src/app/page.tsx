@@ -12,7 +12,8 @@ import {
 import { Room } from "@/db/schema";
 import { GithubIcon } from "lucide-react";
 import { getRooms } from "@/data-access/room";
-import { SplitTags, TagList } from "@/components/tag-list";
+import { TagList } from "@/components/tag-list";
+import { SplitTags } from "@/lib/auth";
 import { SearchBar } from "./search-bar";
 
 
